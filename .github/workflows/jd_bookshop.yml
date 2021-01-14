@@ -1,16 +1,16 @@
 # This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
-name: jd_bean_home
+name: jd_bookshop
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: '08 17,2 * * *'
+    - cron: '20 16,6 * * *'
   watch:
     types: started
   repository_dispatch:
-    types: jd_bean_home
+    types: jd_bookshop
 jobs:
   build:
 
@@ -35,19 +35,22 @@ jobs:
       - name: npm install
         run: |
           npm install
-      - name: '运行jd_bean_home'
+      - name: '运行 【jd_crazy_joy_coin】'
         run: |
-          # random_time=$(($RANDOM % 5))
-          # echo "等待 ${random_time} 分钟后开始执行"
-          # for((i=1; i<=${random_time}; i++));  
-          # do
-          # echo "倒计时 $[${random_time}-$i] 分钟"
-          #  sleep 1m
-          # done
-          node jd_bean_home.js
+          random_time=$(($RANDOM % 2))
+          echo "等待 ${random_time} 分钟后开始执行"
+          for((i=1; i<=${random_time}; i++));  
+          do
+            echo "倒计时 $[${random_time}-$i] 分钟"
+            sleep 1m
+          done
+          node jd_bookshop.js
         env:
           JD_COOKIE: ${{ secrets.JD_COOKIE }}
           JD_DEBUG: ${{ secrets.JD_DEBUG }}
+          JD_BEAN_STOP: ${{secrets.JD_BEAN_STOP}} #自定义延迟签到,单位毫秒. 默认分批并发无延迟. 延迟作用于每个签到接口, 如填入延迟则切换顺序签到(耗时较长)
+          JD_BEAN_SIGN_STOP_NOTIFY: ${{secrets.JD_BEAN_SIGN_STOP_NOTIFY}}
+          JD_BEAN_SIGN_NOTIFY_SIMPLE: ${{secrets.JD_BEAN_SIGN_NOTIFY_SIMPLE}}
           PUSH_KEY: ${{ secrets.PUSH_KEY }}
           BARK_PUSH: ${{ secrets.BARK_PUSH }}
           TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}

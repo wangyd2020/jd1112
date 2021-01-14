@@ -1,15 +1,16 @@
 # This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
-name: jd_live_redrain
+name: jd_818
+
 on:
   workflow_dispatch:
   schedule:
-    - cron: '59 15,0,2,4,6,8,10,11,12,14 * * *'
+    - cron: '01 1,4,10,12,16,22 * * *'
   watch:
     types: started
   repository_dispatch:
-    types: jd_live_redrain
+    types: 818
 jobs:
   build:
 
@@ -24,17 +25,18 @@ jobs:
       - name: npm install
         run: |
           npm install
-      - name: '运行 【jd_live_redrain】'
+      - name: '运行 【手机狂欢城脚本】'
         run: |
-          node jd_live_redrain.js
+          node jd_818.js
         env:
           JD_COOKIE: ${{ secrets.JD_COOKIE }}
           JD_DEBUG: ${{ secrets.JD_DEBUG }}
           PUSH_KEY: ${{ secrets.PUSH_KEY }}
           BARK_PUSH: ${{ secrets.BARK_PUSH }}
+          BARK_SOUND: ${{ secrets.BARK_SOUND }}
           TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
           TG_USER_ID: ${{ secrets.TG_USER_ID }}
-          BARK_SOUND: ${{ secrets.BARK_SOUND }}
           DD_BOT_TOKEN: ${{ secrets.DD_BOT_TOKEN }}
           DD_BOT_SECRET: ${{ secrets.DD_BOT_SECRET }}
           IGOT_PUSH_KEY: ${{ secrets.IGOT_PUSH_KEY }}
+          JD_818_SHAREID_NOTIFY: ${{ secrets.JD_818_SHAREID_NOTIFY }}
