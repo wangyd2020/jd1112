@@ -1,16 +1,14 @@
 # This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
-name: jd_rankingList
+name: jd_super_box
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: '11 18 * * *'
-  watch:
-    types: started
+    - cron: '21 18 * * *'
   repository_dispatch:
-    types: jd_rankingList
+    types: jd_super_box
 jobs:
   build:
 
@@ -21,6 +19,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: hajiuhajiu/jdsign1112
+          ref: master
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
@@ -35,24 +34,21 @@ jobs:
       - name: npm install
         run: |
           npm install
-      - name: '运行 【京东排行榜】'
+      - name: 'jd_super_box'
         run: |
-          random_time=$(($RANDOM % 10))
-          echo "等待 ${random_time} 分钟后开始执行"
-          for((i=1; i<=${random_time}; i++));  
-          do
-            echo "倒计时 $[${random_time}-$i] 分钟"
-            sleep 1m
-          done
-          node jd_rankingList.js
+          node jd_super_box.js
         env:
           JD_COOKIE: ${{ secrets.JD_COOKIE }}
+          JD_USER_AGENT: ${{ secrets.JD_USER_AGENT }}
           JD_DEBUG: ${{ secrets.JD_DEBUG }}
           PUSH_KEY: ${{ secrets.PUSH_KEY }}
+          QQ_SKEY: ${{ secrets.QQ_SKEY }}
+          QQ_MODE: ${{ secrets.QQ_MODE }}
           BARK_PUSH: ${{ secrets.BARK_PUSH }}
-          BARK_SOUND: ${{ secrets.BARK_SOUND }}
           TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
           TG_USER_ID: ${{ secrets.TG_USER_ID }}
+          BARK_SOUND: ${{ secrets.BARK_SOUND }}
           DD_BOT_TOKEN: ${{ secrets.DD_BOT_TOKEN }}
           DD_BOT_SECRET: ${{ secrets.DD_BOT_SECRET }}
           IGOT_PUSH_KEY: ${{ secrets.IGOT_PUSH_KEY }}
+

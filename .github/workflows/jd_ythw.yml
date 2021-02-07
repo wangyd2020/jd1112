@@ -1,19 +1,11 @@
-# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
-
-name: jd_rankingList
+name: jd_jd_ythw
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: '11 18 * * *'
-  watch:
-    types: started
-  repository_dispatch:
-    types: jd_rankingList
+    - cron: '50 15 * * *'
 jobs:
   build:
-
     runs-on: ubuntu-latest
     if: github.event.repository.owner.id == github.event.sender.id
     steps:
@@ -21,6 +13,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: hajiuhajiu/jdsign1112
+          ref: master
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
@@ -33,18 +26,21 @@ jobs:
           path: node_modules
           key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('package-lock.json') }} # 使用 package-lock.json 的 Hash 作为缓存的 key。也可以使用 package.json 代替
       - name: npm install
-        run: |
+        run: |          
           npm install
-      - name: '运行 【京东排行榜】'
+          
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+          
+      - name: 阻塞运行
         run: |
-          random_time=$(($RANDOM % 10))
-          echo "等待 ${random_time} 分钟后开始执行"
-          for((i=1; i<=${random_time}; i++));  
-          do
-            echo "倒计时 $[${random_time}-$i] 分钟"
-            sleep 1m
-          done
-          node jd_rankingList.js
+          curl https://raw.githubusercontent.com/x1iu/jd_scripts/master/wait24.py -o wait.py
+          python3 wait.py 
+      - name: '运行'
+        run: |    
+          node jd_ythw.js
         env:
           JD_COOKIE: ${{ secrets.JD_COOKIE }}
           JD_DEBUG: ${{ secrets.JD_DEBUG }}
