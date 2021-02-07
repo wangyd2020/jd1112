@@ -1,6 +1,6 @@
 /*
 京东抽奖机
-更新时间：2021-02-03 16:28
+更新时间：2021-01-29 19:41
 脚本说明：抽奖活动,有新活动可以@我或者提Issues
 脚本兼容: QuantumultX, Surge, Loon, JSBox, Node.js
 // quantumultx
@@ -14,20 +14,32 @@ cron "11 1 * * *" script-path=https://raw.githubusercontent.com/yangtingxiao/Qua
 京东抽奖机 = type=cron,cronexp=11 1 * * *,wake-system=1,timeout=20,script-path=https://raw.githubusercontent.com/yangtingxiao/QuantumultX/master/scripts/jd/jd_lotteryMachine.js
  */
 const $ = new Env('京东抽奖机');
+//Node.js用户请在jdCookie.js处填写京东ck;
+const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 const STRSPLIT = "|";
 const needSum = false;            //是否需要显示汇总
 const printDetail = false;        //是否显示出参详情
-const appIdArr = ['1EFRRxA','1EFRQwA','1EFRTyg','1EFRSyw','1EFRVxA','1EFRUwg','1EFRVyg','1EFRUww','1EFRVxg','1EFRVxw','1EFRUxA','1EFRUxg','1EFRUyw','1EFRUwQ','1EFRVxQ','1EFRXwQ']
-const shareCodeArr = ['']
-const homeDataFunPrefixArr = ['interact_template','interact_template','','','','','','','','','','','','','']
-const collectScoreFunPrefixArr = ['','','','','','','','','','','','','','']
-const lotteryResultFunPrefixArr = ['','','','','','','','','','','','','','','']
+const appIdArr = ['1EFRRxA','1EFRQwA','1EFRTyg','1EFRSxA','1EFRSyw','1EFRVxA','1EFRUwg','1EFRVyg','1EFRUww','1EFRVxg','1EFRVxw','1EFRUxA','1EFRUxg','1EFRUyw','1EFRVyw']
+const shareCodeArr = [''
+]
+const homeDataFunPrefixArr = ['','','healthyDay','wfh','healthyDay','healthyDay','healthyDay','healthyDay','healthyDay','healthyDay','healthyDay','healthyDay','healthyDay','healthyDay']
+const collectScoreFunPrefixArr = ['','','','wfh','','','','','','','','','','']
+const lotteryResultFunPrefixArr = ['','','interact_template','','interact_template','interact_template','interact_template','interact_template','interact_template','interact_template','interact_template','interact_template','interact_template','interact_template']
+const browseTimeArr = ['','','','','','10','10','10','15','','','15','10','10','']
 let merge = {}
 //IOS等用户直接用NobyDa的jd cookie
 let cookiesArr = [], cookie = '';
+if ($.isNode()) {
+  Object.keys(jdCookieNode).forEach((item) => {
+    cookiesArr.push(jdCookieNode[item])
+  })
+} else {
+  cookiesArr.push($.getdata('CookieJD'));
+  cookiesArr.push($.getdata('CookieJD2'));
+}
+
 const JD_API_HOST = `https://api.m.jd.com/client.action`;
 !(async () => {
-  await requireConfig()
   if (!cookiesArr[0]) {
     $.msg($.name, '【提示】请先获取cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/', {"open-url": "https://bean.m.jd.com/"});
     return;
@@ -48,10 +60,10 @@ const JD_API_HOST = `https://api.m.jd.com/client.action`;
         //j = appIdArr.length - 1
         appId = appIdArr[j]
         shareCode = shareCodeArr[j]
-        homeDataFunPrefix = homeDataFunPrefixArr[j]||'healthyDay'
+        homeDataFunPrefix = homeDataFunPrefixArr[j]||'interact_template'
         collectScoreFunPrefix = collectScoreFunPrefixArr[j]||'harmony'
-        lotteryResultFunPrefix = lotteryResultFunPrefixArr[j]||'interact_template'
-        browseTime = 6
+        lotteryResultFunPrefix = lotteryResultFunPrefixArr[j]||homeDataFunPrefix
+        browseTime = browseTimeArr[j]||6
         if (parseInt(j)) console.log(`\n开始第${parseInt(j) + 1}个抽奖活动`)
         await interact_template_getHomeData();
         //break
@@ -154,15 +166,12 @@ function interact_template_getHomeData(timeout = 0) {
               continue
             }
             let list = data.data.result.taskVos[i].productInfoVos || data.data.result.taskVos[i].followShopVo || data.data.result.taskVos[i].shoppingActivityVos || data.data.result.taskVos[i].browseShopVo
-            if (data.data.result.taskVos[i].subTitleName.match(/(\d+)(s)/)) {
-              browseTime = parseInt(data.data.result.taskVos[i].subTitleName.match(/(\d+)(s)/)[0])
-            }
             for (let k = data.data.result.taskVos[i].times; k < data.data.result.taskVos[i].maxTimes; k++) {
               for (let j in list) {
                 if (list[j].status === 1) {
-                  //console.log(list[j].simpleRecordInfoVo||list[j].assistTaskDetailVo)
+                 // console.log(list[j].simpleRecordInfoVo||list[j].assistTaskDetailVo)
                   console.log("\n" + (list[j].title || list[j].shopName||list[j].skuName))
-                  //console.log(list[j].itemId)
+                 // console.log(list[j].itemId)
                   if (list[j].itemId) {
                     await harmony_collectScore(list[j].taskToken,data.data.result.taskVos[i].taskId,list[j].itemId,1);
                     if (k === data.data.result.taskVos[i].maxTimes - 1) await interact_template_getLotteryResult(data.data.result.taskVos[i].taskId);
@@ -284,43 +293,6 @@ function interact_template_getLotteryResult(taskId,timeout = 0) {
   })
 }
 
-function requireConfig() {
-  return new Promise(resolve => {
-    //Node.js用户请在jdCookie.js处填写京东ck;
-    const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
-    //IOS等用户直接用NobyDa的jd cookie
-    if ($.isNode()) {
-      Object.keys(jdCookieNode).forEach((item) => {
-        if (jdCookieNode[item]) {
-          cookiesArr.push(jdCookieNode[item])
-        }
-      })
-    } else {
-      let cookiesData = $.getdata('CookiesJD') || "[]";
-      cookiesData = jsonParse(cookiesData);
-      cookiesArr = cookiesData.map(item => item.cookie);
-      cookiesArr.reverse();
-      cookiesArr.push(...[$.getdata('CookieJD2'), $.getdata('CookieJD')]);
-      cookiesArr.reverse();
-      cookiesArr = cookiesArr.filter(item => item !== "" && item !== null && item !== undefined);
-    }
-    console.log(`共${cookiesArr.length}个京东账号\n`);
-    resolve()
-  })
-}
-
-function jsonParse(str) {
-  if (typeof str == "string") {
-    try {
-      return JSON.parse(str);
-    } catch (e) {
-      console.log(e);
-      $.msg($.name, '', '请勿随意在BoxJs输入框修改内容\n建议通过脚本去获取cookie')
-      return [];
-    }
-  }
-}
-
 //初始化
 function initial() {
    merge = {
@@ -341,7 +313,7 @@ function initial() {
 //通知
 function msgShow() {
   let message = "";//https://h5.m.jd.com/babelDiy/Zeus/YgnrqBaEmVHWppzCgW8zjZj3VjV/index.html
-  let url ={ "open-url" : `openapp.jdmobile://virtual?params=%7B%22category%22%3A%22jump%22%2C%22des%22%3A%22m%22%2C%22url%22%3A%22https%3A%2F%2Fbean.m.jd.com%2FbeanDetail%2Findex.action%3FresourceValue%3Dbean%22%7D`}
+  let url ={ "open-url" : `openjd://virtual?params=%7B%20%22category%22:%20%22jump%22,%20%22des%22:%20%22m%22,%20%22url%22:%20%22https://h5.m.jd.com/babelDiy/Zeus/YgnrqBaEmVHWppzCgW8zjZj3VjV/index.html%22%20%7D`}
   let title = `京东账号：${merge.nickname}`;
   for (let i in merge) {
     if (typeof (merge[i]) !== "object" || !merge[i].show) continue;
