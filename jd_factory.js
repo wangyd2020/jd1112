@@ -36,7 +36,7 @@ if ($.isNode()) {
 }
 let wantProduct = ``;//心仪商品名称
 const JD_API_HOST = 'https://api.m.jd.com/client.action';
-const inviteCodes = [''];
+const inviteCodes = ["T0124KQ2GkdM81PfCjVWnYaS5kRrbA","T019-ak0PWRKgCO3W02JyLYCjVWnYaS5kRrbA","T019-aksBmRfkjSreH-R1YQCjVWnYaS5kRrbA"];
 !(async () => {
   await requireConfig();
   if (!cookiesArr[0]) {
@@ -605,7 +605,7 @@ function jdfactory_getHomeData() {
 function readShareCode() {
   console.log(`开始`)
   return new Promise(async resolve => {
-    $.get({url: `https://raw.githubusercontent.com/shuye73/RandomShareCode/master/111JD_Factory.json`, timeout: 10000}, (err, resp, data) => {
+    $.get({url: `https://raw.githubusercontent.com/hajiuhajiu/code/main/sharecode/JD_Factory.json`, timeout: 10000}, (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)
