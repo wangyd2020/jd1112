@@ -1,19 +1,18 @@
 # This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
-name: jd_jxfactory京喜工厂
-
+name: jd_fanslove粉丝互动
 on:
   workflow_dispatch:
   schedule:
-    - cron: '21 0-23/1 * * *'
+    - cron: '21 18 * * *'
   repository_dispatch:
-    types: jd_jxfactory
+    types: jd_fanslove
 jobs:
   build:
 
     runs-on: ubuntu-latest
-   
+    if: github.event.repository.owner.id == github.event.sender.id
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -34,9 +33,9 @@ jobs:
       - name: npm install
         run: |
           npm install
-      - name: 'jd_jxfactory'
+      - name: 'jd_fanslove'
         run: |
-          node jd_jxfactory.js
+          node jd_fanslove.js
         env:
           JD_COOKIE: ${{ secrets.JD_COOKIE }}
           JD_USER_AGENT: ${{ secrets.JD_USER_AGENT }}
