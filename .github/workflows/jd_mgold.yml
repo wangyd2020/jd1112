@@ -1,16 +1,16 @@
 # This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
-name: 宠汪汪换500豆
+name: mgold金口碑奖投票
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: '40 15,3 * * *'
+    - cron: '35 3,9 * * *'
   watch:
     types: started
   repository_dispatch:
-    types: 宠汪汪换500豆
+    types: jd_mgold.js
 jobs:
   build:
 
@@ -39,12 +39,10 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.7
-      - name: '宠汪汪换500豆'
+      - name: 'mgold'
+     
         run: |
-              python3 wait24.py 0.1 0.1 29
-      - name: '运行'
-        run: |
-          node jd_joy500.js
+          node jd_mgold.js
          
           
         env:
